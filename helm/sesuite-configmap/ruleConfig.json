@@ -1,0 +1,14 @@
+{
+	"rules": [{
+		"name": "temp_greater_90_within_15min",
+		"metadata": {
+			"field": "batterTemperature",
+			"dataset": "integer",
+			"operation": "greater",
+			"value": "90",
+			"consecutiveTimes": 3,
+			"duration": 15,
+			"unit": "minutes"
+		}
+	}]
+}

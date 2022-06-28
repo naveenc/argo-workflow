@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nats-listner.fullname" . }}
+  labels:
+    app: {{ .Values.service.label}}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.service.label}}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Values.service.label}}
+    spec:
+      volumes:
+      - name: workflow-template-json
+        configMap:
+          name: workflow-template-json
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}/{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port}}
+          envFrom:
+            - configMapRef:
+                name: sesuite-env-variables
+          volumeMounts:                   # same syntax as k8s Pod spec
+          - name: workflow-template-json
+            readOnly: true
+            mountPath: /workflow-template/
+          {{- if .Values.probes.enabled}}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

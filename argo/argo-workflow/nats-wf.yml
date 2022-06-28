@@ -1,0 +1,110 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: data-ingestion-wf
+spec:
+  entrypoint: trigger-data-ingestion
+  imagePullSecrets:
+  - name: regcred
+  volumes:
+  - name: workflow-template-json
+    configMap:
+      name: workflow-template-json
+  - name: cep-config
+    configMap:
+      name: sesuite-cep-config
+  - name: cep-nats-config
+    configMap:
+      name: sesuite-cep-nats-config
+  volumeClaimTemplates:                 # define volume, same syntax as k8s Pod spec
+  - metadata:
+      name: workdir 
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+  templates:
+  - name: trigger-data-ingestion
+    steps:
+    - - name: read-messages
+        template: nats-reader
+    - - name: etl-parser
+        template: etl-parser
+    - - name: persist-messages
+        template: db-writer
+      - name: cep-engine
+        template: cep-engine
+      
+  - name: nats-reader
+    container:
+      #image: localhost:5000/nats-reader:1.2
+      image: .amazonaws.com/nats-reader:2.0
+      command: [sh, -c]
+      args: ["java -jar /work/app.jar nats-reader reader /work/nats/message.txt"]
+    # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+      envFrom:
+        - configMapRef:
+            name: sesuite-env-variables
+      volumeMounts:                     # same syntax as k8s Pod spec
+      - name: workflow-template-json
+        mountPath: /work/
+    outputs:
+      parameters:
+      - name: raw-data
+        valueFrom:
+          default: "No data for the provide batch Id"   # Default value to use if retrieving valueFrom fails. If not provided workflow will fail instead
+          path: /work/nats/message.txt
+
+  - name: etl-parser
+    container:
+      image: .amazonaws.com/etl-parser:latest
+      #command: [sh, -c]
+      #args: ["java -jar /work/app.jar /work/cep-config/ruleConfig.json /work/cep-nats-config/tempEvents.json /work/output/output.json"]
+      # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+      volumeMounts:                     # same syntax as k8s Pod spec
+      - name: inputOutput
+        mountPath: /data
+      - name: schema
+        mountPath: /app
+    outputs:
+      parameters:
+      - name: schema
+        valueFrom:
+          default: "No Schema"
+          path: /app/schema.json
+      - name: output
+        valueFrom:
+          default: "No Schema"
+          path: /data/output.json
+      
+
+  - name: db-writer
+    container:
+      image: .amazonaws.com/db-writer:2.1
+      command: [sh, -c]
+      args: ["java -jar /work/app.jar /work/nats/message.txt"]
+      # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+      volumeMounts:                     # same syntax as k8s Pod spec
+      - name: workdir
+        mountPath: /work/nats
+      
+  - name: cep-engine
+    container:
+      image: localhost:5000/cep-engine:1.2
+      command: [sh, -c]
+      args: ["java -jar /work/app.jar /work/cep-config/ruleConfig.json /work/cep-nats-config/tempEvents.json /work/output/output.json"]
+      # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+      volumeMounts:                     # same syntax as k8s Pod spec
+      - name: workdir
+        mountPath: /work/nats
+      - name: cep-config
+        mountPath: /work/cep-config
+      - name: cep-nats-config
+        mountPath: /work/cep-nats-config/
+    outputs:
+      parameters:
+      - name: cep-output
+        valueFrom:
+          default: "cep-output"
+          path: /work/output/output.json

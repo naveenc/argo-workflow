@@ -1,0 +1,1 @@
+kubectl create configmap workflow-template-json --from-file=workflowTemplate.json -n argo

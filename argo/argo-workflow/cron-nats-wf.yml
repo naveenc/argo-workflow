@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: cron-nats-wf
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: "Replace"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: volumes-pvc
+    imagePullSecrets:
+    - name: regcred
+    volumes:
+    - name: cep-config
+      configMap:
+        name: sesuite-cep-config
+    - name: cep-nats-config
+      configMap:
+        name: sesuite-cep-nats-config
+    volumeClaimTemplates:                 # define volume, same syntax as k8s Pod spec
+    - metadata:
+        name: workdir 
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+    templates:
+    - name: volumes-pvc
+      steps:
+      - - name: read-messages
+          template: nats-reader
+      - - name: persist-messages
+          template: db-writer
+        - name: cep-engine
+          template: cep-engine
+        
+    - name: nats-reader
+      container:
+        #image: localhost:5000/nats-reader:1.2
+        image: .amazonaws.com/nats-reader:2.0
+        command: [sh, -c]
+        args: ["java -jar /work/app.jar nats-reader reader /work/nats/message.txt"]
+      # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+        volumeMounts:                     # same syntax as k8s Pod spec
+        - name: workdir
+          mountPath: /work/nats
+          
+    - name: db-writer
+      container:
+        image: .amazonaws.com/db-writer:2.1
+        command: [sh, -c]
+        args: ["java -jar /work/app.jar /work/nats/message.txt"]
+        # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+        volumeMounts:                     # same syntax as k8s Pod spec
+        - name: workdir
+          mountPath: /work/nats
+        
+    - name: cep-engine
+      container:
+        image: localhost:5000/cep-engine:1.2
+        command: [sh, -c]
+        args: ["java -jar /work/app.jar /work/cep-config/ruleConfig.json /work/cep-nats-config/tempEvents.json /work/output/output.json"]
+        # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+        volumeMounts:                     # same syntax as k8s Pod spec
+        - name: workdir
+          mountPath: /work/nats
+        - name: cep-config
+          mountPath: /work/cep-config
+        - name: cep-nats-config
+          mountPath: /work/cep-nats-config/
+      outputs:
+        parameters:
+        - name: cep-output
+          valueFrom:
+            default: "cep-output"
+            path: /work/output/output.json

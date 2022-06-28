@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: test-cron-wf
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: "Replace"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: natsMess
+    templates:
+    - name: natsMess
+      #implementation:
+      container:
+        #image: localhost:5000/utthunga/se-suite-sample:0.2
+        image: docker-java:3.0
+        command: [sh, -c]
+        args: ["java -jar /work/app.jar"]
+      outputs:
+        parameters:
+        - name: hello-param		# name of output parameter
+          valueFrom:
+            path: /mnt/nats/message.txt

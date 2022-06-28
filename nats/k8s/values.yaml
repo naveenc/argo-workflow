@@ -1,0 +1,17 @@
+nats:
+  image: nats:2.6.5-alpine
+  pullPolicy: IfNotPresent
+  
+  jetstream:
+    enabled: true
+
+    #temp
+    # memStorage:
+    #   enabled: true
+    #   size: 2Gi
+
+    fileStorage:
+      enabled: true
+      storageDirectory: /data/
+      existingClaim: nats-js-disk
+      claimStorageSize: 3Gi

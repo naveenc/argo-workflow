@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: volumes-pvc
+spec:
+  entrypoint: volumes-pvc
+  volumeClaimTemplates:                 # define volume, same syntax as k8s Pod spec
+  - metadata:
+      name: workdir                     # name of volume claim
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi                  # Gi => 1024 * 1024 * 1024
+
+  templates:
+  - name: volumes-pvc
+    steps:
+    - - name: read-messages
+        template: nats-reader
+    - - name: persist-messages
+        template: db-writer
+
+  - name: nats-reader
+    container:
+      image: 578665562983.dkr.ecr.ap-south-1.amazonaws.com/nats-reader:1.0
+      command: [sh, -c]
+      args: ["java -jar /work/app.jar sesuite-dev sesuite-apm-dev /work/nats/message.txt"]
+      # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+      volumeMounts:                     # same syntax as k8s Pod spec
+      - name: workdir
+        mountPath: /work/nats
+
+  - name: db-writer
+    retryStrategy:
+      limit: "5"
+      retryPolicy: "Always"
+    container:
+      image: 578665562983.dkr.ecr.ap-south-1.amazonaws.com/db-writer:1.0
+      command: [sh, -c]
+      args: ["java -jar /work/app.jar /work/nats/message.txt"]
+      # Mount workdir volume at /mnt/vol before invoking docker/whalesay
+      volumeMounts:                     # same syntax as k8s Pod spec
+      - name: workdir
+        mountPath: /work/nats

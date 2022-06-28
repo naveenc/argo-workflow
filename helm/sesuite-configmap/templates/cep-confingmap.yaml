@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.cepConfig.name }}
+  namespace: {{ .Values.nameSpace}}
+data:
+  ruleConfig.json: |
+{{ .Files.Get "ruleConfig.json" | indent 4}}

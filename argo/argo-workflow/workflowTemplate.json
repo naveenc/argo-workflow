@@ -1,0 +1,292 @@
+{
+    "namespace": "argo",
+    "serverDryRun": false,
+    "workflow": {
+      "metadata": {
+        "generateName": "data-ingestion-",
+        "namespace": "argo",
+        "labels": {
+          "workflows.argoproj.io/completed": "false"
+        }
+      },
+      "spec": {
+        "entrypoint": "trigger-data-ingestion",
+        "templates": [
+          {
+            "name": "trigger-data-ingestion",
+            "inputs": {
+              
+            },
+            "outputs": {
+              
+            },
+            "metadata": {
+              
+            },
+            "steps": [
+              [
+                {
+                  "name": "read-raw-data",
+                  "template": "raw-db-reader",
+                  "arguments": {
+                    
+                  }
+                }
+              ],
+              [
+                {
+                  "name": "etl-parser",
+                  "template": "etl-parser",
+                  "arguments": {
+                    
+                  }
+                }
+              ],
+              [
+                {
+                  "name": "persist-messages",
+                  "template": "db-writer",
+                  "arguments": {
+                    
+                  }
+                }
+              ]
+            ]
+          },
+          {
+            "name": "raw-db-reader",
+            "inputs": {
+              
+            },
+            "outputs": {
+              "parameters": [
+                {
+                  "name": "raw-data",
+                  "valueFrom": {
+                    "path": "/app/data/input.json",
+                    "default": "No data for the provide batch Id"
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              
+            },
+            "container": {
+              "name": "",
+              "image": "578665562983.dkr.ecr.ap-south-1.amazonaws.com/raw-db-reader:latest",
+              "imagePullPolicy": "Always",
+              "command": [
+                "sh",
+                "-c"
+              ],
+              "args": [
+                "java -jar /work/app.jar #batchId# /app/data/input.json"
+              ],
+              "envFrom": [
+                {
+                  "configMapRef": {
+                    "name": "sesuite-env-variables"
+                  }
+                }
+              ],
+              "resources": {
+                
+              },
+              "volumeMounts": [
+                {
+                  "name": "workdir",
+                  "mountPath": "/app/data"
+                }
+              ]
+            }
+          },
+          {
+            "name": "etl-parser",
+            "inputs": {
+              
+            },
+            "outputs": {
+              "parameters": [
+                {
+                  "name": "schema",
+                  "valueFrom": {
+                    "path": "/app/schema.json",
+                    "default": "No Schema"
+                  }
+                },
+                {
+                  "name": "input",
+                  "valueFrom": {
+                    "path": "/app/data/input.json",
+                    "default": "Empty input"
+                  }
+                },
+                {
+                  "name": "output",
+                  "valueFrom": {
+                    "path": "/app/data/output.json",
+                    "default": "Empty output1"
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              
+            },
+            "container": {
+              "name": "",
+              "image": "578665562983.dkr.ecr.ap-south-1.amazonaws.com/etl-parser:latest",
+              "imagePullPolicy": "Always",
+              "command": [
+                "/app/run.sh"
+              ],
+              "resources": {
+                
+              },
+              "volumeMounts": [
+                {
+                  "name": "workdir",
+                  "mountPath": "/data"
+                },
+                {
+                  "name": "workdir",
+                  "mountPath": "/app/data"
+                }
+              ]
+            }
+          },
+          {
+            "name": "db-writer",
+            "inputs": {
+              
+            },
+            "outputs": {
+              
+            },
+            "metadata": {
+              
+            },
+            "container": {
+              "name": "",
+              "image": "578665562983.dkr.ecr.ap-south-1.amazonaws.com/db-writer:2.1",
+              "command": [
+                "sh",
+                "-c"
+              ],
+              "envFrom": [
+                {
+                  "configMapRef": {
+                    "name": "sesuite-env-variables"
+                  }
+                }
+              ],
+              "args": [
+                "java -jar /work/app.jar /app/data/output.json"
+              ],
+              "resources": {
+                
+              },
+              "volumeMounts": [
+                {
+                  "name": "workdir",
+                  "mountPath": "/app/data"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cep-engine",
+            "inputs": {
+              
+            },
+            "outputs": {
+              "parameters": [
+                {
+                  "name": "cep-output",
+                  "valueFrom": {
+                    "path": "/work/output/output.json",
+                    "default": "cep-output"
+                  }
+                }
+              ]
+            },
+            "metadata": {
+              
+            },
+            "container": {
+              "name": "",
+              "image": "localhost:5000/cep-engine:1.2",
+              "command": [
+                "sh",
+                "-c"
+              ],
+              "args": [
+                "java -jar /work/app.jar /work/cep-config/ruleConfig.json /work/cep-nats-config/tempEvents.json /work/output/output.json"
+              ],
+              "resources": {
+                
+              },
+              "volumeMounts": [
+                {
+                  "name": "workdir",
+                  "mountPath": "/work/nats"
+                },
+                {
+                  "name": "cep-config",
+                  "mountPath": "/work/cep-config"
+                },
+                {
+                  "name": "cep-nats-config",
+                  "mountPath": "/work/cep-nats-config/"
+                }
+              ]
+            }
+          }
+        ],
+        "arguments": {
+          
+        },
+        "volumes": [
+          {
+            "name": "cep-config",
+            "configMap": {
+              "name": "sesuite-cep-config"
+            }
+          },
+          {
+            "name": "cep-nats-config",
+            "configMap": {
+              "name": "sesuite-cep-nats-config"
+            }
+          }
+        ],
+        "volumeClaimTemplates": [
+          {
+            "metadata": {
+              "name": "workdir",
+              "creationTimestamp": null
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "1Gi"
+                }
+              }
+            },
+            "status": {
+              
+            }
+          }
+        ],
+        "imagePullSecrets": [
+          {
+            "name": "regcred"
+          }
+        ]
+      }
+    }
+}

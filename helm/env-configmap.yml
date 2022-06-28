@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sesuite-env-variables
+  namespace: dev
+data:
+  DB_USERNAME: postgresadmin
+  DB_PASSWORD: admin123
+  DB_URL: jdbc:postgresql://3.109.191.110:31496/postgresdb
+  WORKFLOW_URL: https://3.109.191.110:31327/api/v1
+  NATS_SERVER_HOST: sesuite-nats.nats
