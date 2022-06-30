@@ -1,0 +1,154 @@
+curl -X POST -H "Content-Type: application/json" -d "{\"message\":\"My 1 webhook\"}" http://localhost:12000/example
+
+telnet 172.31.16.1 4222
+pub com.utthunga 27
+"{\"message\": \"hello5\"}"
+
+pub testSub 27
+
+Creation of Stream. -> nats.exe stream add info
+publish 100 msessage -> nats pub test --count 100 
+pub testSub 157
+"UPSERT#CCDTYPES#{"itemTypeUuid":"10f6dafb-08ba-4eee-b7fe-0946e5dd0955","name":"rStatus","description":"Active","id":"10f6dafb-08ba-4eee-b7fe-0946e5dd0955"}"
+
+"{"itemTypeUuid":"10f6dafb-08ba-4eee-b7fe-0946e5dd0955","name":"rStatus","description":"Active"}"
+
+args: ["java -jar /usr/local/runme/app.jar"]
+
+docker run --name nats --rm -p 4222:4222 nats
+
+docker run --name nats-js --rm -p 4222:4222 nats -js
+
+nats con add test naveen-consumer --ack none --target naveen-consumer.test --deliver last --replay instant --filter '' --heartbeat=10s --flow-control
+
+mvng <<CONTEXT_NAME>>
+
+
+docker build -t nats-reader .
+docker tag nats-reader:latest nats-reader:1.0
+
+
+docker save nats-reader:1.0 | bzip2 | ssh ubuntu@3.109.191.110 docker load
+
+
+docker save -o nats-reader.tar nats-reader:1.0
+docker save -o db-writer.tar db-writer:1.0
+#copy the tar to other machine and load to other docker using below command
+docker load --input nats-reader.tar
+
+creating docker registry
+docker run -d -p 5000:5000 --restart=always --name registry registry:2
+docker tag db-writer:1.0 localhost:5000/db-writer:1.2 
+docker push localhost:5000/db-writer:1.2
+
+mvn package -Dquarkus.package.type=uber-jar
+
+
+kubectl create secret docker-registry regcred --docker-server=578665562983.dkr.ecr.ap-south-1.amazonaws.com --docker-username=AWS --docker-password=eyJwYXlsb2FkIjoiM24wZkgzVUxJQVhGanBVanlPN0F6Q1grUytjakVFamdjMzg2VGdhcGNYcCtJS3F3WWxCMDZQMDFrUGZlYUZxT3NsWlpjUnJGemJkNTJFaXVVRmkvVmt1ZVdid3ZBMkNjYW9KdkdQTDNZNlNod2dXZEp5L1VoUGhmOG1Id0Y1eTVXMS9PeTlHMTBYQUsrWHFiS3J2Y1lhMWF4dFphRUNTWTJib29NOS9mNktuVHluckRlclY1Q0NPaWtITzZlRTFhL2VFd0dDYXdxTEJldE5qNzB6TGtzSk1FODd1UTBDMnE1N2swSWoxOGN0Y3hidGxpM2ZBcDhtRTZsT1F1NUdTRXpmUFcvbDN4Y3NyOUJBd2ZPYmZtdXBJRXBDNkdMSzRhWk9uWktGSStjV25GMWk3MHM0Z3ovN3ZlaHFwQWlSdnBES3d1azVHTUtvUjRDbTFrOVg0R09UZmd3SHBFbVMwY0dRWThJRllTK3pzczgxWnM4QU1uMEZDclkreWZndEI2cWV0SGtJa3ZMVTVkTnpwWktzUThLS01YNDlPNVdDSWVrTWtpN00xMFo1czJSOWhLRlRFa2dUUVdlaEc5dDMxNmpPejU3V1d4L3dZYTNnV3JqR1AyYzJIbFN2Q012ZGExMHFFeGJmTHZ0a2tBRW5zd2JOamY3NVgxQWgza3N0Qnc2TlI5Wk9YUVlnK3hUQUd1MDV1NFdIMzJVVHA1bWlMczRyRzRnOTNtRHBMc2t0QldzeGRBTjc1UzMrMjN1MVR0b1JDcUhiTlV6Mk1uTFRocEp0VXRRd2J3dDlVWFYzY0hhQUsxRFViK2R1dEZMRm5lWmMrR28yTHlBdmRrcEVSZVh6RGNmYTYxbWxwYzh4UFJTdDIxeC9zS2FLQUZhUlZmOW9HdGU0enFRSDVibXBjTlYyR2VPWHhZTERodlNlV0VOK0gwb29XVU1qZ2pJeXp0eUVNQ3RkL0RVVlBnazZwMzFSL3RzVlBCemlVZmFsMGFETjRaREowUk9MSWNoeUVlSUxYdWt5OEg3cEpEZmZqVGhLcit2c21sL3R5RGw4Zi9RcnU5ckIyNHpEQVdWYWgyamlBMUVHWUtlL3NrUUQ3TVR3MWNaSUdDZ3dwNFBmSGMzVlNLRGJLYWtqdTA1NjFQbWJMUytUT1B4VU0xVTA1WkEyb0RBSXBDd1UyMkRWWkVjZU9wSzhSeUZtS1Y1Y2syU1hOUXJzcWhSdFNwZUJsVE9zT2N6c2I2NjVlb0RlL1JBRTdHNzdvV1R5cXJkekQweGdjNW1DYUNTaXU4cVgrV0UxUmhNWHdCWnc0VkE0U1JUOS9EeHl0SHFjV2txYVRXenhlSXJHak1VR2o2aUhmS21tN3U0NHJtelM5bjUvaEtxN0Y0TmIzeVdnckMyUlRrS0xxVXFVcz0iLCJkYXRha2V5IjoiQVFJQkFIaUhXYVlUblJVV0NibnorN0x2TUcrQVB2VEh6SGxCVVE5RnFFbVYyNkJkd3dHejE2U29jNTczZVo3bzZ3L2xFazZLQUFBQWZqQjhCZ2txaGtpRzl3MEJCd2FnYnpCdEFnRUFNR2dHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNS1VGbWVtRmZLNWMybXZJckFnRVFnRHVWalpoK01zYlpFRUt0eEZzR3M5Y1d2RURSdFF2Z01BOGVoUTZ1RGw0alJKSzBZeWt4TWJvak1pNngxT1Z0VkYzNzdqUjlzb0VMV2JZSW9BPT0iLCJ2ZXJzaW9uIjoiMiIsInR5cGUiOiJEQVRBX0tFWSIsImV4cGlyYXRpb24iOjE2NDg3NDAzNTF9 --namespace=argo
+
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "regcred"}]}'
+
+
+http://thinkmicroservices.com/blog/2021/jetstream/nats-jetstream.html
+https://vladmihalcea.com/map-string-jpa-property-json-column-hibernate/
+
+
+        ZonedDateTime startTime = ZonedDateTime.now().minusHours(1);
+//        ConsumerConfiguration consumerConfig = ConsumerConfiguration.builder().durable("ConsumeByTime").deliverPolicy(DeliverPolicy.ByStartTime).startTime(startTime).replayPolicy(ReplayPolicy.Instant).build();
+        ConsumerConfiguration consumerConfig = ConsumerConfiguration.builder().durable("ConsumeBySequence").deliverPolicy(DeliverPolicy.ByStartSequence).startSequence(10l).replayPolicy(ReplayPolicy.Instant).build();
+        
+        PullSubscribeOptions pullOptions = PullSubscribeOptions.builder()
+        		.configuration(consumerConfig)
+        		.build();
+				
+				
+SECRET=$(kubectl.exe get sa java-client -o=jsonpath='{.secrets[0].name}')
+ARGO_TOKEN="Bearer $(kubectl.exe get secret $SECRET -o=jsonpath='{.data.token}' | base64 --decode)"
+echo $ARGO_TOKEN
+Bearer ZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNkltS...
+
+
+
+curl https://3.109.191.110:31327//api/v1/workflows/argo -H "Authorization: eyJhbGciOiJSUzI1NiIsImtpZCI6IkVBdjNfNGRqSW96X0llUFJsb1pJQ1MySW93UVNicEF1eDhXVGM3WDk0QWsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImphdmEtY2xpZW50LXRva2VuLWRka3MyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImphdmEtY2xpZW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiOGE2ZDI3OTQtYmU4My00ZmEyLTkxZDctN2U3YTUyMzNiZGNmIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRlZmF1bHQ6amF2YS1jbGllbnQifQ.WHBuz8KJamOaJ_MLBKr5-ldpWkL7RnmWRijgblnb6X9jcEx9KgSeJCHGwbz5kVhyY4Yqj1TwgUCcn6Kr6BOquiA6IXrB5ExGneirjycB87_MqCntdAG0aMc7vjUUCYcRqzTTudrAe9sCNwKzNenMzo2pM0suKeqrZJgtGaDpakZFDpH2cmv_FgnvXdqR1MKq2DK3ObBqNO9kzmhQOgge286ibir5Zr3U950X84FdwvHVOIudR7nljQ_5_EBFLgPtxbhqb0hvoxNmdEZRncKZT20AeHx1rcOAZuGa89dPif7E0alUWRSKQQqfFCf8aDLpqk65snltfAoGD2sOQJ4c0A"
+
+
+
+k3sup install --skip-install --local-path ~/.kube/config --merge --host ec2-3-109-191-110.ap-south-1.compute.amazonaws.com --user ubuntu --ssh-key D:/naveen/sesuite-central.pem
+
+
+
+naveen@UT-LTP-1053:/mnt/d/k3sup-int$ ./k3sup install --skip-install --local-path ~/.kube/config --merge --host ec2-3-109-191-110.ap-south-1.compute.amazonaws.com --user ubuntu --ssh-key ../naveen/sesuite-central.pem
+Running: k3sup install
+2022/01/20 18:54:31 ec2-3-109-191-110.ap-south-1.compute.amazonaws.com
+Public IP: ec2-3-109-191-110.ap-south-1.compute.amazonaws.com
+Merging config into file: /home/naveen/.kube/config
+Saving file to: /home/naveen/.kube/config
+
+# Test your cluster with:
+export KUBECONFIG=/home/naveen/.kube/config
+kubectl config set-context default
+kubectl get node -o wide
+
+
+kubectl config set current-context default
+
+psql -h localhost -U postgresadmin --password -p 31496 postgresdb
+
+create table cdd_type (
+"id" serial primary key,
+"itemTypeUuid" UUID,
+"name" varchar,
+"description" varchar
+);
+
+create table se_suite (
+"id" serial primary key,
+"assetID" int,
+"propertyID" int,
+"deviceID" int,
+"value" int,
+"readDT" int,
+"registerAddress" int
+);
+
+CREATE TABLE asset_data (
+	"assestID"
+	"asset_model_property_id" text NULL,
+	"value" text NULL,
+	"values" json NULL,
+	"read_at" int NULL,
+	"transaction" uuid NULL,
+	"created_at" timestamp NULL
+);
+
+CREATE TABLE nats_raw_data (
+	"data" json NULL,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+	"status" int DEFAULT 0 NOT NULL  
+);
+
+https://skryvets.com/blog/2021/03/15/kubernetes-pull-image-from-private-ecr-registry/
+aws ecr get-login-password
+kubectl create secret docker-registry regcred --docker-server=578665562983.dkr.ecr.ap-south-1.amazonaws.com --docker-username=AWS --docker-password=eyJwYXlsb2FkIjoiVVV4NUUrUXAwNDF3WFpiajlwVktwa0c4VEpXM2tCRVhKcGlQNE1uZlNXNFUrUjc2RFkxUVA1MnBUS1BwZmcwSjRpV2tHN0pRZGN2Y2txVjlZK1paUDJkZWtVVnBmZGo1Nmc2UVRGZ2l3ZjJ1QlRPTVRQSjdxMkpJTm40ZVV0WDhBNDRORG5LQmo4aytVRnpuN3UzNVA4R29zcHhrZzdVZnRHVzl2RGhYNFNGN0wxTUVFMDNuYWtmaUEzci9XUStyaUx0ZkJMSzFvUnNQSmkzQmNGdmpwTHVLM25NSXVlQkZzOFAwVmhFQUJ1MnhObzNkZW1Ra0VRcE15N01BZ3J1c1VlVlFtYy9UeWZKY055Qy8yTmJlNkluZDlJdk9yOWtHY0RBSmtSM0ppRkZWcGV2SndwV0JqZ2I1aythVm1qckxidTNPR0pUZ0w4Wm84WXZrTFptQnR2cGVYdlozMk9scEE0M3RvMGlpQ0RFUlQ4WHVvOTJZQmdtRWtreXdoU3hrVVl3RE9sVEVTOE0xTDJPYkQxMk9pS250OWVlaTFjbG1Ca1FPM01CUXd6ck8xYWthcjZzNHMvaEs1eDR4bFRWTjZ1MXd3a1NoRDFNejB0S1h0NWpvZjlXWFBCZHhyODRJU3FEd3I4eTRmVUhmMThJMGM3eDhGRWloMzFrWWlRcitPZUl2cW40NUNrTHdDTUprVk9zWnBYVFZKbGw1M2tiQWxvWnFCOHdqL2FlazYxZHZHZTBJeTROTlg0aHFUVVRxOVd6Q0VueU1oc2FSdlJuVk94Q0ROd1p6czlGclpzM09rd0ZQWUl0bnhFTnZMZmd4MlBybWsvL1lBeUZHcm5OekN4c01Nc0JJWUt5dnNlWlJrZzJSbmZrVEthWXF3emlQcTBCelB5UFRuT1AvSks0NHQxVmJEZFdibjErdEVoR1c5Slo2OGFNeHpLS2pPSUdFdUY3OTNUQUdrUkpONFVqWXBsNGNneFJqQUpNUFowQ1BxZGVCNGw1cTlwVHJid1dvdktwaTY4NkFWZE9DSXQvRlRJdmFoRWZleW5aaS9NS3cyUWFFblRpakxKTE9qSjV1TC9wNncxNHhzajBCdzlwMUVtaFVndzh4NkUySHA5SFo2Y09nR3JIK0RhUUZLVnJHWFJxc1NZMno4SlREQ3dyejBiUlBkaGM2c0Jkb0F2K2ZaemZGY3hiek1oMGZZQnNjYS90RGhHTXhPejJ5aFNJMHMybmVJY3lvNkI2R3ZkTS9SaG9DNWduRTV5c1R1Q25YUXdRcHZKRnRoTGI0UzZCNWRQamlib0tMSVBNc1VCallFSXQ5Y3dCUlUydGhVSVVNbG9EY3kzejJKRjRZVHYyZS9JMlMyRi9Zem40cmJYVVVqUlJRLyt4VkNwZXlrQ0tJeUZ2T0VRYz0iLCJkYXRha2V5IjoiQVFJQkFIaUhXYVlUblJVV0NibnorN0x2TUcrQVB2VEh6SGxCVVE5RnFFbVYyNkJkd3dFL2NqTzZsei9kWXlqUG9ZeTVZellHQUFBQWZqQjhCZ2txaGtpRzl3MEJCd2FnYnpCdEFnRUFNR2dHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNSmNTVnZOSUdhc3Z0cXhKd0FnRVFnRHZIR2NLdC9DMEFrVmY4NFdqeERYRUtHdWdCMkFXdDVLVnZBS2s5czUwMXdSa1FjdW13QWIwK08ySDA2WDlVaTJyMENGQWNCOWFSbHVoVjdBPT0iLCJ2ZXJzaW9uIjoiMiIsInR5cGUiOiJEQVRBX0tFWSIsImV4cGlyYXRpb24iOjE2NTQyNzM4Mzd9 --namespace=dev
+
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "regcred"}]}'
+
+
+curl -k https://3.109.191.110:31327/api/v1/workflows/argo
+
+
+CREATE TABLE raw_data (
+	"data" jsonb NULL,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	"status" int DEFAULT 0 null,
+	"batch_id" UUID not null
+);
+
+delete from raw_data;
+
+insert into nats_raw_data ("data") values ('{"id":123,"name":"Naveen"}');
+
+curl -k https://3.109.191.110:31327/api/v1/workflows/argo
+
+
+
